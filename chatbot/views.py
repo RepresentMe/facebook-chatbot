@@ -2,28 +2,31 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from . import models
+import json
 
 
 @csrf_exempt
 def webhook(req):
     m = models.Message()
-    m.sender = str(req)
-    #m.text = message['message']['text']
+    m.sender = str(req.body)
+    # m.text = message['message']['text']
     m.save()
-    if 'hub.verify_token' in req.GET and req.GET['hub.verify_token'] == 'test':
-        if 'hub.challenge' in req.GET:
-            return HttpResponse(req.GET['hub.challenge'])
-        else:
-            print(dict(req.GET))
-            for message in req.GET['entry.messaging']:
-                print('yeah2')
+    # Post function to handle Facebook messages
+    # Converts the text payload into a python dictionary
+    incoming_message = json.loads(req.body)
+    # Facebook recommends going through every entry since they might send
+    # multiple messages in a single call during high load
+    for entry in incoming_message['entry']:
+        for message in entry['messaging']:
+            # Check to make sure the received call is a message call
+            # This might be delivery, optin, postback for other events
+            if message.has_key('message'):
+                # Print the message to the terminal
                 m = models.Message()
-                m.sender = message['sender']
+                m.sender = message['sender']['id']
                 m.text = message['message']['text']
                 m.save()
-    else:
-        return HttpResponse('Sorry, bad token')
-
+    return HttpResponse()
     # print(dir(req))
     # m = models.Message()
     # m.sender = 'Oleg'
