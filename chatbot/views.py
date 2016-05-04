@@ -32,12 +32,15 @@ def webhook(req):
 
 
 def ask_question(user_id):
+    quest = requests.get('https://represent.me/api/next_question/')
+    ret_string = json.loads(quest.text)['results'][0]['question']
+
     question_req = {
         'recipient': {
             'id': user_id
         },
         'message': {
-            'text': 'Test'
+            'text': ret_string
         }
     }
     url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % \
