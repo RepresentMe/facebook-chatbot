@@ -8,7 +8,7 @@ import json
 @csrf_exempt
 def webhook(req):
     m = models.Message()
-    m.sender = str(req.body)
+    m.sender = '123'#str(req.body)
     # m.text = message['message']['text']
     m.save()
     # Post function to handle Facebook messages
