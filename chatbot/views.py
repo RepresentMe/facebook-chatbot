@@ -5,8 +5,21 @@ from . import models
 
 
 def webhook(req):
+    m = models.Message()
+    m.sender = str(req.GET)
+    #m.text = message['message']['text']
+    m.save()
     if 'hub.verify_token' in req.GET and req.GET['hub.verify_token'] == 'test':
-        return HttpResponse(req.GET['hub.challenge'])
+        if 'hub.challenge' in req.GET:
+            return HttpResponse(req.GET['hub.challenge'])
+        else:
+            print(dict(req.GET))
+            for message in req.GET['entry.messaging']:
+                print('yeah2')
+                m = models.Message()
+                m.sender = message['sender']
+                m.text = message['message']['text']
+                m.save()
     else:
         return HttpResponse('Sorry, bad token')
 
