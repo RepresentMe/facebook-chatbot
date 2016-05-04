@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-
+from django.views.decorators.csrf import csrf_exempt
 from . import models
 
-
+@csrf_exempt
 def webhook(req):
     m = models.Message()
     m.sender = str(req.GET)
