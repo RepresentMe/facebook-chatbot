@@ -43,7 +43,7 @@ def ask_question(user_id):
     url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % \
           (
               'EAAVZCyjFh4eEBAF6ox3WSbpiTUI4ksXPCTFLXpK2ZAeT7i85SgWM9aekq1eu8ZBMSCetTqObtl8DYWHPzRMGnYPT2ugwpD394mAZBonciOefHVxtZCiMsOKgYr6o3N5yKCbvuqVCV0Of6wRuoaY4UBH5AzjDPwUwntasI3jqGMgZDZD',)
-    r = requests.get(url, body=json.dumps(question_req))
+    r = requests.get(url, data=question_req)
     print(r.text)
 
 
