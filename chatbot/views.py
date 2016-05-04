@@ -1,75 +1,28 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from . import models
+from . import models, questions
 import json
-import requests
 
 
 @csrf_exempt
 def webhook(req):
-    # Post function to handle Facebook messages
-    # Converts the text payload into a python dictionary
     incoming_message = json.loads(req.body)
-    # Facebook recommends going through every entry since they might send
-    # multiple messages in a single call during high load
     for entry in incoming_message['entry']:
         for message in entry['messaging']:
             # Check to make sure the received call is a message call
             # This might be delivery, optin, postback for other events
             if message.has_key('message'):
-                # Print the message to the terminal
                 m = models.Message()
                 m.sender = message['sender']['id']
                 m.text = message['message']['text']
                 m.save()
-                if m.text.lower()=='ask':
-                    ask_question(m.sender)
+
+                if m.text.lower() == 'ask':
+                    questions.ask_question(m.sender)
                 else:
-                    misunderstood(m.sender)
+                    questions.misunderstood(m.sender)
     return HttpResponse()
-    # print(dir(req))
-    # m = models.Message()
-    # m.sender = 'Oleg'
-    # m.save()
-
-
-def ask_question(user_id):
-    quest = requests.get('https://represent.me/api/next_question/')
-    ret_string = json.loads(quest.text)['results'][0]['question']
-
-    question_req = {
-        'recipient': {
-            'id': user_id
-        },
-        'message': {
-            'text': ret_string
-        }
-    }
-    url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % \
-          (
-              'EAAVZCyjFh4eEBAF6ox3WSbpiTUI4ksXPCTFLXpK2ZAeT7i85SgWM9aekq1eu8ZBMSCetTqObtl8DYWHPzRMGnYPT2ugwpD394mAZBonciOefHVxtZCiMsOKgYr6o3N5yKCbvuqVCV0Of6wRuoaY4UBH5AzjDPwUwntasI3jqGMgZDZD',)
-    response_msg = json.dumps(question_req)
-    r = requests.post(url, headers={"Content-Type": "application/json"}, data=response_msg)
-    print(r.text)
-
-
-def misunderstood(user_id):
-    question_req = {
-        'recipient': {
-            'id': user_id
-        },
-        'message': {
-            'text': 'Sorry, I didn\'t understand you :(. If you want me to ask question, type "Ask"'
-        }
-    }
-    url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % \
-      (
-          'EAAVZCyjFh4eEBAF6ox3WSbpiTUI4ksXPCTFLXpK2ZAeT7i85SgWM9aekq1eu8ZBMSCetTqObtl8DYWHPzRMGnYPT2ugwpD394mAZBonciOefHVxtZCiMsOKgYr6o3N5yKCbvuqVCV0Of6wRuoaY4UBH5AzjDPwUwntasI3jqGMgZDZD',)
-    response_msg = json.dumps(question_req)
-    r = requests.post(url, headers={"Content-Type": "application/json"}, data=response_msg)
-    print(r.text)
-
 
 
 def last_messages(req):
