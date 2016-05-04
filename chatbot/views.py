@@ -3,10 +3,11 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from . import models
 
+
 @csrf_exempt
 def webhook(req):
     m = models.Message()
-    m.sender = str(req.GET)
+    m.sender = str(req.POST)
     #m.text = message['message']['text']
     m.save()
     if 'hub.verify_token' in req.GET and req.GET['hub.verify_token'] == 'test':
