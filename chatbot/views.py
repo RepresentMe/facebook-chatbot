@@ -7,7 +7,7 @@ from . import models
 @csrf_exempt
 def webhook(req):
     m = models.Message()
-    m.sender = str(req.POST)
+    m.sender = str(req)
     #m.text = message['message']['text']
     m.save()
     if 'hub.verify_token' in req.GET and req.GET['hub.verify_token'] == 'test':
