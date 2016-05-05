@@ -7,6 +7,7 @@ import json
 
 @csrf_exempt
 def webhook(req):
+    print(req.body)
     incoming_message = json.loads(req.body)
     for entry in incoming_message['entry']:
         for message in entry['messaging']:
