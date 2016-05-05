@@ -40,7 +40,7 @@ def ask_question(user, message):
     l = ",".join(list(map(lambda a: str(a['question_id']), l)))
     if len(l)>1:
         l = "?&id__in!="+l
-    else
+    else:
         l = ""
     quest = requests.get('https://represent.me/api/next_question/%s' % l)
     quest = json.loads(quest.text)['results'][0]
