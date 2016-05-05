@@ -7,7 +7,7 @@ import json
 
 @csrf_exempt
 def webhook(req):
-    print(req.body)
+    #print(req.body)
     incoming_message = json.loads(req.body)
     for entry in incoming_message['entry']:
         for message in entry['messaging']:
@@ -18,7 +18,6 @@ def webhook(req):
                 m.sender = message['sender']['id']
                 m.text = message['message']['text']
                 m.save()
-
                 if m.text.lower() == 'ask':
                     questions.ask_question(m.sender)
                 else:
