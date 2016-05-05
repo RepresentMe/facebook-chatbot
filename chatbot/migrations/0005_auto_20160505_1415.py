@@ -16,10 +16,5 @@ class Migration(migrations.Migration):
             model_name='answer',
             old_name='user_id',
             new_name='user',
-        ),
-        migrations.AlterField(
-            model_name='user',
-            name='id',
-            field=models.IntegerField(primary_key=True, serialize=False),
-        ),
+        )
     ]
