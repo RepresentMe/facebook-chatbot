@@ -37,7 +37,7 @@ def send_message(user_id, message):
 
 
 def ask_question(user, message):
-    l = models.Answer.objects.filter(user_id=user).values('question_id').distinct()
+    l = models.Answer.objects.filter(user_id=user.id).values('question_id').distinct()
     l = ",".join(list(map(lambda a: str(a['question_id']), l)))
     if len(l) > 1:
         l = "?&id__in!=" + l
@@ -58,7 +58,7 @@ def write_answer(user, message):
     user.current_question = -1
     user.save()
     a = models.Answer()
-    a.user_id = user
+    a.user_id = user.id
     a.question_id = user.current_question
     a.answer = message.text
     a.save()

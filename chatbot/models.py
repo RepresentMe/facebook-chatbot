@@ -14,7 +14,7 @@ class User(models.Model):
 
 
 class Answer(models.Model):
-    user = models.ForeignKey(User)
+    user_id = models.CharField(max_length=200)
     question_id = models.IntegerField()
     answer = models.CharField(max_length=400)
 
