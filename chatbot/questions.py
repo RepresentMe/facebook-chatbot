@@ -36,7 +36,9 @@ def send_message(user_id, message):
 
 
 def ask_question(user, message):
-    quest = requests.get('https://represent.me/api/next_question/')
+    l = models.Answer.objects.filter(user_id=user).values('question_id').distinct()
+    l = ",".join(list(map(lambda a: str(a['question_id']), l)))
+    quest = requests.get('https://represent.me/api/next_question/?&id__in!=%s' % l)
     quest = json.loads(quest.text)['results'][0]
     user.current_question = quest['id']
     user.save()
