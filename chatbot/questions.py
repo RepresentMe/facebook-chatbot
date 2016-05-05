@@ -1,35 +1,58 @@
 import requests, json
 from django.conf import settings
 import logging
+import models
 
 
-def ask_question(user_id):
+def process_message(user_id, message):
+    m = models.Message()
+    m.sender = user_id
+    m.text = message
+    m.save()
+    user = models.User.objects.get_or_create(pk=m.sender)
+    user = user[0]
+    if user.current_question == -1:
+        if m.text.lower() == 'ask':
+            ask_question(user, m)
+        else:
+            misunderstood(user, m)
+    else:
+        write_answer(user, m)
+
+
+def send_message(user_id, message):
+    question_req = {
+        'recipient': {
+            'id': user_id
+        },
+        'message': {
+            'text': message
+        }
+    }
+    url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % settings.BOT_KEY
+    response_msg = json.dumps(question_req)
+    r = requests.post(url, headers={"Content-Type": "application/json"}, data=response_msg)
+    logging.debug(r.text)
+
+
+def ask_question(user, message):
     quest = requests.get('https://represent.me/api/next_question/')
-    ret_string = json.loads(quest.text)['results'][0]['question']
-    question_req = {
-        'recipient': {
-            'id': user_id
-        },
-        'message': {
-            'text': ret_string
-        }
-    }
-    url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % settings.BOT_KEY
-    response_msg = json.dumps(question_req)
-    r = requests.post(url, headers={"Content-Type": "application/json"}, data=response_msg)
-    logging.debug(r.text)
+    quest = json.loads(quest.text)['results'][0]
+    user.current_question = quest['id']
+    user.save()
+    send_message(user.id, quest['question'])
 
 
-def misunderstood(user_id):
-    question_req = {
-        'recipient': {
-            'id': user_id
-        },
-        'message': {
-            'text': 'Sorry, I didn\'t understand you :(. If you want me to ask question, type "Ask"'
-        }
-    }
-    url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % settings.BOT_KEY
-    response_msg = json.dumps(question_req)
-    r = requests.post(url, headers={"Content-Type": "application/json"}, data=response_msg)
-    logging.debug(r.text)
+def misunderstood(user, message):
+    send_message(user.id, 'Sorry, I didn\'t understand you :(. If you want me to ask question, type "Ask"')
+
+
+def write_answer(user, message):
+    a = models.Answer()
+    a.user_id = user
+    a.question_id = user.current_question
+    a.answer = message.text
+    a.save()
+    user.current_question = -1
+    user.save()
+    send_message(user.id, "Answer written")

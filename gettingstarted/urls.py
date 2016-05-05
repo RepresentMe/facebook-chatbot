@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^$', chatbot.views.index, name='index'),
     url(r'^webhook', chatbot.views.webhook, name='webhook'),
     url(r'^lastmessage', chatbot.views.last_messages, name='lastmessages'),
+    url(r'^testmessage', chatbot.views.test_message, name='testmessage'),
     url(r'^admin/', include(admin.site.urls)),
 ]
