@@ -55,11 +55,11 @@ def misunderstood(user, message):
 
 
 def write_answer(user, message):
+    user.current_question = -1
+    user.save()
     a = models.Answer()
     a.user_id = user
     a.question_id = user.current_question
     a.answer = message.text
     a.save()
-    user.current_question = -1
-    user.save()
     send_message(user.id, "Answer written")
