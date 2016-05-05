@@ -9,7 +9,7 @@ class Message(models.Model):
 
 
 class User(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.CharField(max_length=200, primary_key=True)
     current_question = models.IntegerField(default=-1)
 
 
