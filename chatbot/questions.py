@@ -11,6 +11,7 @@ def process_message(user_id, message):
     m.save()
     user = models.User.objects.get_or_create(pk=m.sender)
     user = user[0]
+    user.save()
     if user.current_question == -1:
         if m.text.lower() == 'ask':
             ask_question(user, m)
@@ -38,8 +39,8 @@ def send_message(user_id, message):
 def ask_question(user, message):
     l = models.Answer.objects.filter(user_id=user).values('question_id').distinct()
     l = ",".join(list(map(lambda a: str(a['question_id']), l)))
-    if len(l)>1:
-        l = "?&id__in!="+l
+    if len(l) > 1:
+        l = "?&id__in!=" + l
     else:
         l = ""
     quest = requests.get('https://represent.me/api/next_question/%s' % l)
