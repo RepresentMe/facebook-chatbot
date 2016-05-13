@@ -14,6 +14,7 @@ def process_message(user_id, message):
     states_dict[user.state](user, m)
     user.save()
 
+
 def idle(user, message):
     cmd = message.text.lower()
     if cmd == 'ask':
@@ -22,6 +23,8 @@ def idle(user, message):
         help(user, message)
     elif cmd == 'reg':
         auth.register_me(user, message)
+    elif cmd == 'register':
+        auth.register(user, message)
     else:
         misunderstood(user, message)
 

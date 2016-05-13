@@ -29,3 +29,7 @@ class States:
     question_asked = 1
     email_asked = 2
     name_asked = 3
+
+
+def is_exit(string):
+    return string == '@'

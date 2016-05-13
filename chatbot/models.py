@@ -16,11 +16,11 @@ class User(models.Model):
     current_question = models.IntegerField(default=-1)
     state = models.IntegerField(default=0)
 
-    account_created = models.BooleanField(default=False)
+    represent_id = models.IntegerField(default=-1)
     email = models.EmailField(null=True)
     username = models.CharField(max_length=256, null=True)
-    firstname = models.CharField(max_length=256, null=True)
-    lastname = models.CharField(max_length=256, null=True)
+    first_name = models.CharField(max_length=256, null=True)
+    last_name = models.CharField(max_length=256, null=True)
 
 
     def __str__(self):
