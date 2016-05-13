@@ -22,18 +22,24 @@ def process_message(user_id, message):
 
 
 def send_message(user_id, message):
-    question_req = {
-        'recipient': {
-            'id': user_id
-        },
-        'message': {
-            'text': message
+    if settings.DEBUG:
+        m = models.Message()
+        m.sender = user_id
+        m.text = "Answer: %s" % (message,)
+        m.save()
+    else:
+        question_req = {
+            'recipient': {
+                'id': user_id
+            },
+            'message': {
+                'text': message
+            }
         }
-    }
-    url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % settings.BOT_KEY
-    response_msg = json.dumps(question_req)
-    r = requests.post(url, headers={"Content-Type": "application/json"}, data=response_msg)
-    logging.debug(r.text)
+        url = 'https://graph.facebook.com/v2.6/me/messages?access_token=%s' % settings.BOT_KEY
+        response_msg = json.dumps(question_req)
+        r = requests.post(url, headers={"Content-Type": "application/json"}, data=response_msg)
+        logging.debug(r.text)
 
 
 def ask_question(user, message):

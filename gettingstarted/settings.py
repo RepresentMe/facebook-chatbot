@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 import os
 import dj_database_url
+import os
+import logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -25,7 +27,12 @@ SECRET_KEY = 'i+acxn5(akgsn!sr4^qgf(^m&*@+g1@u^t@=8s@axc41ml*f=s'
 BOT_KEY = 'EAAVZCyjFh4eEBAF6ox3WSbpiTUI4ksXPCTFLXpK2ZAeT7i85SgWM9aekq1eu8ZBMSCetTqObtl8DYWHPzRMGnYPT2ugwpD394mAZBonciOefHVxtZCiMsOKgYr6o3N5yKCbvuqVCV0Of6wRuoaY4UBH5AzjDPwUwntasI3jqGMgZDZD'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+env = os.getenv('ENVIRONMENT', 'prod')
+if env == 'debug':
+    DEBUG = True
+    logging.basicConfig(level=logging.DEBUG)
+    logging.warning("Debug mode")
 
 # Application definition
 
@@ -129,8 +136,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
-import logging
-logging.basicConfig(level=logging.DEBUG)
+
+
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
