@@ -1,6 +1,8 @@
 from messaging import *
 import random
 
+from django.core.exceptions import ValidationError
+
 
 def register_me(user, message):
     if user.represent_id == -1:
@@ -19,6 +21,11 @@ def email_write(user, message):
         user.state = States.idle
         return
     user.email = message.text
+    try:
+        user.full_clean()
+    except ValidationError as e:
+        send_message(user, 'An error occurred\n%s' % get_error_list(e.message_dict))
+        return
     send_message(user, 'Email written.'
                        'What is your name? Ex: John Snow')
     user.state = States.name_asked
@@ -35,6 +42,11 @@ def name_write(user, message):
     else:
         user.first_name = tokens[0]
         user.last_name = tokens[1]
+        try:
+            user.full_clean()
+        except ValidationError as e:
+            send_message(user, 'An error occurred\n%s' % get_error_list(e.message_dict))
+            return
         send_message(user, 'Name written.')
         register(user, message)
 
@@ -54,8 +66,8 @@ def register(user, message):
     if r.status_code == 201:
         user.represent_id = int(resp['id'])
         send_message(user, 'Your account successfully created. \n User id: %s. \n'
-                           'Support for providing account details will be avaliable soon' % (user.represent_id))
+                           'Providing account details will be avaliable soon' % (user.represent_id))
     else:
         send_message(user,
-                     'An error occurred:\n%s' % '\n'.join('%s: %s' % (a[0], ' '.join(a[1])) for a in resp.items()))
+                     'An error occurred:\n%s' % get_error_list(resp))
     user.state = States.idle
