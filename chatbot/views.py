@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse,
+
 from django.views.decorators.csrf import csrf_exempt
 from . import models, questions
 import json
@@ -11,6 +12,7 @@ from django.conf import settings
 def webhook(req):
     incoming_message = json.loads(req.body)
     if 'hub.verify_token' in req.GET:
+        print req.GET['hub.challenge']
         return HttpResponse(req.GET['hub.challenge'])
     for entry in incoming_message['entry']:
         for message in entry['messaging']:
