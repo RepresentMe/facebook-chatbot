@@ -11,6 +11,7 @@ from django.conf import settings
 @csrf_exempt
 def webhook(req):
     incoming_message = json.loads(req.body)
+    print req.GET
     if 'hub.verify_token' in req.GET:
         print req.GET['hub.challenge']
         return HttpResponse(req.GET['hub.challenge'])
@@ -40,7 +41,6 @@ def test_message(req):
         if 'user_id' in req.GET:
             questions.process_message(req.GET['user_id'], req.GET['text'])
             user = req.GET['user_id']
-
         return render(req, 'test_message.html', {'user_id': user})
     else:
         raise PermissionDenied
