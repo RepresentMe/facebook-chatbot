@@ -9,8 +9,9 @@ from django.conf import settings
 
 @csrf_exempt
 def webhook(req):
-
     incoming_message = json.loads(req.body)
+    if 'hub.verify_token' in req.GET:
+        return HttpResponse(req.GET['hub.challenge'])
     for entry in incoming_message['entry']:
         for message in entry['messaging']:
             if message.has_key('message'):
@@ -19,11 +20,16 @@ def webhook(req):
 
 
 def last_messages(req):
-    return render(req, 'lastmessages.html', {'messages': models.Message.objects.all()})
+    if settings.DEBUG:
+        return render(req, 'lastmessages.html', {'messages': models.Message.objects.all()})
+    return HttpResponse(403)
 
 
 def last_messages_by_id(req, id):
-    return render(req, 'lastmessages.html', {'messages': models.Message.objects.all().filter(sender=id)})
+    if settings.DEBUG:
+        return render(req, 'lastmessages.html', {'messages': models.Message.objects.all().filter(sender=id)})
+    else:
+        return HttpResponse(403)
 
 
 @csrf_exempt
