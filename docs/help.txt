@@ -1,3 +1,4 @@
 This is represent.me bot. Current functionality involves:
 Asking questions: type "Ask" to get next question
 Creating account on represent.me: type "Reg" to start.
+Note, that you can interrupt any process at any stage by typing single character: '@'

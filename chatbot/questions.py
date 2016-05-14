@@ -45,7 +45,7 @@ def ask_question(user, message):
 
 
 def misunderstood(user, message):
-    send_message(user, 'Sorry, I didn\'t understand you :(. If you want me to ask question, type "Ask"')
+    send_message(user, 'Sorry, I didn\'t understand you :(. To get help type "Help"')
 
 
 help_text = open('docs/help.txt').read()
@@ -56,6 +56,10 @@ def help(user, message):
 
 
 def write_answer(user, message):
+    if is_exit(message.text):
+        send_message(user, 'Answering canceled')
+        user.state = States.idle
+        return
     a = Answer()
     a.user_id = user.id
     a.question_id = user.current_question
