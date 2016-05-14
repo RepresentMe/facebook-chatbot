@@ -48,8 +48,11 @@ def misunderstood(user, message):
     send_message(user, 'Sorry, I didn\'t understand you :(. If you want me to ask question, type "Ask"')
 
 
+help_text = open('docs/help.txt').read()
+
+
 def help(user, message):
-    pass
+    send_message(user, help_text)
 
 
 def write_answer(user, message):
