@@ -10,11 +10,11 @@ from django.conf import settings
 
 @csrf_exempt
 def webhook(req):
-    incoming_message = json.loads(req.body)
     print req.GET
     if 'hub.verify_token' in req.GET:
         print req.GET['hub.challenge']
         return HttpResponse(req.GET['hub.challenge'])
+    incoming_message = json.loads(req.body)
     for entry in incoming_message['entry']:
         for message in entry['messaging']:
             if message.has_key('message'):
