@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse,
-
+from django.http import JsonResponse, HttpResponse
+from django.core.exceptions import PermissionDenied
 from django.views.decorators.csrf import csrf_exempt
 from . import models, questions
 import json
@@ -24,14 +24,13 @@ def webhook(req):
 def last_messages(req):
     if settings.DEBUG:
         return render(req, 'lastmessages.html', {'messages': models.Message.objects.all()})
-    return HttpResponse(403)
-
+    raise PermissionDenied
 
 def last_messages_by_id(req, id):
     if settings.DEBUG:
         return render(req, 'lastmessages.html', {'messages': models.Message.objects.all().filter(sender=id)})
     else:
-        return HttpResponse(403)
+        raise PermissionDenied
 
 
 @csrf_exempt
@@ -44,7 +43,7 @@ def test_message(req):
 
         return render(req, 'test_message.html', {'user_id': user})
     else:
-        return HttpResponse(403)
+        raise PermissionDenied
 
 
 def index(req):
