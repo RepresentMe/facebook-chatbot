@@ -74,7 +74,7 @@ def register(user, message):
 
 
 def authenticate(user):
-    r = requests.post('%s/auth/login/'% (settings.REPRESENT_URL,),
+    r = requests.post('%s/auth/login/' % (settings.REPRESENT_URL,),
                       {'username': user.username, 'password': user.password})
     j = r.json()
     if 'auth_token' in j:
@@ -87,6 +87,6 @@ def authenticated(fun):
     def new_fun(user, message):
         if not user.auth_token:
             authenticate(user)
-        fun(user, message)
+        return fun(user, message)
 
     return new_fun

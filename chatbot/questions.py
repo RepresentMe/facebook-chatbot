@@ -73,7 +73,7 @@ def write_answer(user, message):
     a.user_id = user.id
     a.question_id = user.current_question
     a.answer = message.text
-    a.sent = send_message(user, message)
+    a.sent = send_answers(user, message)
     a.save()
     user.current_question = -1
     user.state = States.idle
@@ -85,9 +85,9 @@ def write_answer(user, message):
 def send_answers(user, message):
     r = requests.post('%s/api/question_votes/' % (settings.REPRESENT_URL,), {
         'object_id': user.current_question,
-        'value': message.text
+        'value': int(message.text) + 3
     }, headers=user.get_headers())
-    return r.status_code // 100 == 4
+    return r.status_code // 100 == 2
 
 
 states_dict = {
