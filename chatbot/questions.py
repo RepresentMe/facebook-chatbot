@@ -41,7 +41,9 @@ def ask_question(user, message):
     user.current_question = quest['id']
     user.state = States.question_asked
     user.save()
-    send_message(user, quest['question'])
+    send_message(user,
+                 '%s\nType your attitude to this question from -2 (Strongly disagree) to 2 (Strongly agree)' % quest[
+                     'question'])
 
 
 def misunderstood(user, message):
@@ -59,6 +61,13 @@ def write_answer(user, message):
     if is_exit(message.text):
         send_message(user, 'Answering canceled')
         user.state = States.idle
+        return
+    try:
+        ans = int(message.text)
+        if ans not in range(-2, 3):
+            raise Exception
+    except:
+        send_message(user, 'Your answer not a single number berween -2 and 2')
         return
     a = Answer()
     a.user_id = user.id
