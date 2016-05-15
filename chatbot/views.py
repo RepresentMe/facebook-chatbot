@@ -47,6 +47,6 @@ def test_message(req):
 
 
 def index(req):
-    return HttpResponse('Hello on chatbot server!')
+    return HttpResponse('Hello on represent.me chatbot server!')
 
 # Create your views here.

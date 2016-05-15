@@ -36,7 +36,7 @@ def ask_question(user, message):
         l = "?&id__in!=" + l
     else:
         l = ""
-    quest = requests.get('https://represent.me/api/next_question/%s' % l)
+    quest = requests.get('%s/api/next_question/%s' % (settings.REPRESENT_URL, l))
     quest = json.loads(quest.text)['results'][0]
     user.current_question = quest['id']
     user.state = States.question_asked
@@ -67,17 +67,27 @@ def write_answer(user, message):
         if ans not in range(-2, 3):
             raise Exception
     except:
-        send_message(user, 'Your answer not a single number berween -2 and 2')
+        send_message(user, 'Your answer not a single number between -2 and 2')
         return
     a = Answer()
     a.user_id = user.id
     a.question_id = user.current_question
     a.answer = message.text
+    a.sent = send_message(user, message)
     a.save()
     user.current_question = -1
     user.state = States.idle
     user.save()
     send_message(user, "Answer written")
+
+
+@auth.authenticated
+def send_answers(user, message):
+    r = requests.post('%s/api/question_votes/' % (settings.REPRESENT_URL,), {
+        'object_id': user.current_question,
+        'value': message.text
+    }, headers=user.get_headers())
+    return r.status_code // 100 == 4
 
 
 states_dict = {

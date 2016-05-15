@@ -37,3 +37,4 @@ def is_exit(string):
 
 def get_error_list(dct):
     return '\n'.join('%s: %s' % (a[0], ' '.join(a[1])) for a in dct.items())
+

@@ -29,10 +29,12 @@ BOT_KEY = 'EAAVZCyjFh4eEBAF6ox3WSbpiTUI4ksXPCTFLXpK2ZAeT7i85SgWM9aekq1eu8ZBMSCet
 # SECURITY WARNING: don't run with debug turned on in production!
 
 env = os.getenv('ENVIRONMENT', 'prod')
+REPRESENT_URL = 'https://represent.me'
 if env == 'debug':
     DEBUG = True
     logging.basicConfig(level=logging.DEBUG)
     logging.warning("Debug mode")
+    REPRESENT_URL = 'https://test.represent.me'
 
 # Application definition
 

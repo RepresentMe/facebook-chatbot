@@ -55,7 +55,7 @@ def register(user, message):
     chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
     user.password = ''.join(random.choice(chars) for _ in range(8))
     user.username = user.email
-    r = requests.post('https://test.represent.me/auth/register/', {
+    r = requests.post('%s/auth/register/' % (settings.REPRESENT_URL,), {
         "email": user.email,
         "username": user.username,
         "first_name": user.first_name,
@@ -71,3 +71,22 @@ def register(user, message):
         send_message(user,
                      'An error occurred:\n%s' % get_error_list(resp))
     user.state = States.idle
+
+
+def authenticate(user):
+    r = requests.post('%s/auth/login/'% (settings.REPRESENT_URL,),
+                      {'username': user.username, 'password': user.password})
+    j = r.json()
+    if 'auth_token' in j:
+        user.auth_token = j['auth_token']
+    else:
+        send_message(user, 'An error occurred:%s' % get_error_list(j))
+
+
+def authenticated(fun):
+    def new_fun(user, message):
+        if not user.auth_token:
+            authenticate(user)
+        fun(user, message)
+
+    return new_fun

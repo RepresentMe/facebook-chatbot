@@ -23,6 +23,10 @@ class User(models.Model):
     last_name = models.CharField(max_length=256, null=True, blank=True)
     password = models.CharField(max_length=256, null=True, blank=True)
 
+    auth_token = models.CharField(max_length=50, null=True, blank=True)
+
+    def get_headers(self):
+        return {'Authorization': 'Token %s' % self.auth_token}
 
     def __str__(self):
         return "Id: %s" % (self.id,)
@@ -32,6 +36,7 @@ class Answer(models.Model):
     user_id = models.CharField(max_length=200)
     question_id = models.IntegerField()
     answer = models.CharField(max_length=400)
+    sent = models.BooleanField(default=False)
 
     def __str__(self):
         return "%s (%s) %s" % (self.user_id, self.question_id, self.answer)
